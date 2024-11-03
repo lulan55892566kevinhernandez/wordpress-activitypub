@@ -89,7 +89,7 @@ class Webfinger {
 
 		$profile = array(
 			'subject' => sprintf( 'acct:%s', $user->get_webfinger() ),
-			'aliases' => array_values( array_unique( $aliases ) ),
+			'aliases' => $aliases,
 			'links'   => array(
 				array(
 					'rel'  => 'self',
