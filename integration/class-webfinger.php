@@ -47,6 +47,7 @@ class Webfinger {
 		$jrd['aliases'][] = $user->get_url();
 		$jrd['aliases'][] = $user->get_alternate_url();
 		$jrd['aliases']   = array_unique( $jrd['aliases'] );
+		$jrd['aliases']   = array_values( $jrd['aliases'] );
 
 		$jrd['links'][] = array(
 			'rel'  => 'self',
@@ -84,6 +85,7 @@ class Webfinger {
 		);
 
 		$aliases = array_unique( $aliases );
+		$aliases = array_values( $aliases );
 
 		$profile = array(
 			'subject' => sprintf( 'acct:%s', $user->get_webfinger() ),
