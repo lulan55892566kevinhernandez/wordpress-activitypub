@@ -28,8 +28,7 @@ class Comment {
 		\add_filter( 'get_comment_link', array( self::class, 'remote_comment_link' ), 11, 3 );
 		\add_action( 'wp_enqueue_scripts', array( self::class, 'enqueue_scripts' ) );
 		\add_action( 'pre_get_comments', array( static::class, 'comment_query' ) );
-		\add_action( 'pre_comment_approved', array( static::class, 'pre_comment_approved' ), 10, 2 );
-
+		\add_filter( 'pre_comment_approved', array( static::class, 'pre_comment_approved' ), 10, 2 );
 		\add_filter( 'get_avatar_comment_types', array( static::class, 'get_avatar_comment_types' ), 99 );
 	}
 
@@ -681,7 +680,7 @@ class Comment {
 			return $approved;
 		}
 
-		if ( '1' !== get_option( 'comment_previously_approved' ) ) {
+		if ( '1' !== \get_option( 'comment_previously_approved' ) ) {
 			return $approved;
 		}
 
