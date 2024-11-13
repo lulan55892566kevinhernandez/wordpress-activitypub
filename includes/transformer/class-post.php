@@ -883,15 +883,15 @@ class Post extends Base {
 
 		$title = \get_the_title( $this->wp_object->ID );
 
-		if ( $title ) {
-			return \wp_strip_all_tags(
-				\html_entity_decode(
-					$title
-				)
-			);
+		if ( ! $title ) {
+			return null;
 		}
 
-		return null;
+		return \wp_strip_all_tags(
+			\html_entity_decode(
+				$title
+			)
+		);
 	}
 
 	/**
