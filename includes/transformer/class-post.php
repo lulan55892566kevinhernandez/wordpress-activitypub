@@ -10,7 +10,7 @@ namespace Activitypub\Transformer;
 use WP_Post;
 use Activitypub\Shortcodes;
 use Activitypub\Model\Blog;
-use Activitypub\Collection\Users;
+use Activitypub\Collection\Actors;
 
 use function Activitypub\esc_hashtag;
 use function Activitypub\is_single_user;
@@ -113,7 +113,7 @@ class Post extends Base {
 			return $blog_user;
 		}
 
-		$user = Users::get_by_id( $this->wp_object->post_author );
+		$user = Actors::get_by_id( $this->wp_object->post_author );
 
 		if ( $user && ! is_wp_error( $user ) ) {
 			$this->actor_object = $user;
