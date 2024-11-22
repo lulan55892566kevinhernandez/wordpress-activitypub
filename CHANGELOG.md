@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* A `pre_activitypub_get_upload_baseurl` filter
 * Fediverse Preview on post-overview page
 * GitHub action to enforce Changelog updates.
 
