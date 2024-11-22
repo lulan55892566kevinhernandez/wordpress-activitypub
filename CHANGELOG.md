@@ -11,7 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * A `pre_activitypub_get_upload_baseurl` filter
 * Fediverse Preview on post-overview page
-* GitHub action to enforce Changelog updates.
+* GitHub action to enforce Changelog updates
+* New contributors
 
 ### Improved
 
@@ -20,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-* Fixed: Fediverse preview showing `preferredUsername` instead of `name`.
+* Fediverse preview showing `preferredUsername` instead of `name`
 
 ## 4.2.1 - 2024-11-20
 
@@ -46,7 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* GitHub action to enforce Changelog updates.
+* GitHub action to enforce Changelog updates
 
 ### Improved
 
@@ -57,7 +58,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-* Do not display ActivityPub's user sub-menus to users who do not have the capabilities of writing posts.
+* Do not display ActivityPub's user sub-menus to users who do not have the capabilities of writing posts
 * Proper margins for notices and font size for page title in settings screen
 * Ensure that `?author=0` resolves to blog user
 
