@@ -139,6 +139,7 @@ For reasons of data protection, it is not possible to see the followers of other
 * Improved: Clarified settings page text around which users get Activitypub profiles
 * Fixed: Prevent hex color codes in HTML attributes from being added as post tags
 * Fixed: A typo in the custom post content settings
+* Fixed: Prevent draft posts from being federated when bulk deleted
 
 = 4.3.0 =
 
