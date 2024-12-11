@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * `icon` support for `Audio` and `Video` attachments
 * Send "new follower" emails
+* Send "direct message" emails
 
 ### Improved
 
