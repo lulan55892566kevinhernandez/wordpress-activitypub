@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Add a filter to allow modifying the ActivityPub preview template
 * `@mentions` in the JSON representation of the reply
+* Add settings to enable/disable e-mail notifications for new followers and direct messages
 
 ### Improved
 

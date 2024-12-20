@@ -22,10 +22,14 @@ class Mailer {
 		\add_filter( 'comment_notification_text', array( self::class, 'comment_notification_text' ), 10, 2 );
 
 		// New follower notification.
-		\add_action( 'activitypub_notification_follow', array( self::class, 'new_follower' ) );
+		if ( '1' === \get_option( 'activitypub_mailer_new_follower', '0' ) ) {
+			\add_action( 'activitypub_notification_follow', array( self::class, 'new_follower' ) );
+		}
 
 		// Direct message notification.
-		\add_action( 'activitypub_inbox_create', array( self::class, 'direct_message' ), 10, 2 );
+		if ( '1' === \get_option( 'activitypub_mailer_new_dm', '0' ) ) {
+			\add_action( 'activitypub_inbox_create', array( self::class, 'direct_message' ), 10, 2 );
+		}
 	}
 
 	/**
