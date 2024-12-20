@@ -137,6 +137,7 @@ For reasons of data protection, it is not possible to see the followers of other
 * Added: A filter to allow modifying the ActivityPub preview template
 * Added: `@mentions` in the JSON representation of the reply
 * Improved: HTML to e-mail text conversion
+* Improved: Direct Messages: Test for the user being in the to field
 
 = 4.5.1 =
 
