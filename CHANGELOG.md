@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+* More robust handling of `_activityPubOptions` in scripts, using a `useOptions()` helper.
+
 ### Added
 
 * Support for WPML post locale
