@@ -139,6 +139,10 @@ For reasons of data protection, it is not possible to see the followers of other
 * Fixed: More robust handling of `_activityPubOptions` in scripts, using a `useOptions()` helper.
 * Fixed: Flush post caches after Followers migration.
 
+= Unreleased =
+
+* Changed: Improved content negotiation and AUTHORIZED_FETCH support for third-party plugins
+
 = 4.7.1 =
 
 * Fixed: Missing migration
@@ -149,11 +153,11 @@ For reasons of data protection, it is not possible to see the followers of other
 * Added: A filter to make custom comment types manageable in WP.com Calypso
 * Changed: Hide ActivityPub post meta keys from the custom Fields UI
 * Changed: Bumped minimum required PHP version to 7.2
+* Changed: Print `_activityPubOptions` in the `wp_footer` action on the frontend.
 * Fixed: Undefined array key warnings in various places
 * Fixed: @-mentions in federated comments being displayed with a line break
 * Fixed: Fetching replies from the same instance for Enable Mastodon Apps
 * Fixed: Image captions not being included in the ActivityPub representation when the image is attached to the post
-* Changed: Print `_activityPubOptions` in the `wp_footer` action on the frontend.
 
 = 4.6.0 =
 
