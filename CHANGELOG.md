@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Improved content negotiation and AUTHORIZED_FETCH support for third-party plugins
 
+## [4.7.3] - 2025-01-21
+
 ### Fixed
 
 * Flush rewrite rules after NodeInfo update.
@@ -1231,8 +1233,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * initial
 
-[Unreleased]: https://github.com/Automattic/wordpress-activitypub/compare/4.7.2...trunk
+[Unreleased]: https://github.com/Automattic/wordpress-activitypub/compare/4.7.3...trunk
 <!-- Add new release below and update "Unreleased" link -->
+[4.7.3]: https://github.com/Automattic/wordpress-activitypub/compare/4.7.2...4.7.3
 [4.7.2]: https://github.com/Automattic/wordpress-activitypub/compare/4.7.1...4.7.2
 [4.7.1]: https://github.com/Automattic/wordpress-activitypub/compare/4.7.0...4.7.1
 [4.7.0]: https://github.com/Automattic/wordpress-activitypub/compare/4.6.0...4.7.0
