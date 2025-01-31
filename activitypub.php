@@ -40,7 +40,6 @@ Autoloader::register_path( __NAMESPACE__, __DIR__ . '/includes' );
  */
 function rest_init() {
 	Rest\Actors::init();
-	Rest\Outbox::init();
 	Rest\Inbox::init();
 	Rest\Followers::init();
 	Rest\Following::init();
@@ -48,8 +47,9 @@ function rest_init() {
 	Rest\Server::init();
 	Rest\Collection::init();
 	Rest\Post::init();
-	( new Rest\Interaction_Controller() )->register_routes();
 	( new Rest\Application_Controller() )->register_routes();
+	( new Rest\Interaction_Controller() )->register_routes();
+	( new Rest\Outbox_Controller() )->register_routes();
 	( new Rest\Webfinger_Controller() )->register_routes();
 
 	// Load NodeInfo endpoints only if blog is public.
@@ -65,7 +65,7 @@ function rest_init() {
 function plugin_init() {
 	\add_action( 'init', array( __NAMESPACE__ . '\Migration', 'init' ) );
 	\add_action( 'init', array( __NAMESPACE__ . '\Activitypub', 'init' ) );
-	\add_action( 'init', array( __NAMESPACE__ . '\Activity_Dispatcher', 'init' ) );
+	\add_action( 'init', array( __NAMESPACE__ . '\Dispatcher', 'init' ) );
 	\add_action( 'init', array( __NAMESPACE__ . '\Handler', 'init' ) );
 	\add_action( 'init', array( __NAMESPACE__ . '\Admin', 'init' ) );
 	\add_action( 'init', array( __NAMESPACE__ . '\Hashtag', 'init' ) );
