@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 * Manually granting `activitypub` cap no longer requires the receiving user to have `publish_post`.
+* Changed: Allow Base Transformer to handle WP_Term objects for transformation.
 
 ### Fixed
 
