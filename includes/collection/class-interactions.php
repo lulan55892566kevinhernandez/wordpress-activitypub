@@ -47,8 +47,7 @@ class Interactions {
 			$comment_post_id = $parent_comment->comment_post_ID;
 		}
 
-		// Not a reply to a post or comment.
-		if ( ! $comment_post_id ) {
+		if ( is_post_disabled( $comment_post_id ) ) {
 			return false;
 		}
 
