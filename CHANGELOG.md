@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+* Cleanup of option values when the plugin is uninstalled
+
 ### Changed
 
 * Manually granting `activitypub` cap no longer requires the receiving user to have `publish_post`.
