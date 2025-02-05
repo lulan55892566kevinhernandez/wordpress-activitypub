@@ -135,6 +135,7 @@ For reasons of data protection, it is not possible to see the followers of other
 
 * Added: Cleanup of option values when the plugin is uninstalled.
 * Added: Third-party plugins can filter settings tabs to add their own settings pages for ActivityPub.
+* Added: Show ActivityPub preview in row actions when Block Editor is enabled but not used for the post type.
 * Changed: Manually granting `activitypub` cap no longer requires the receiving user to have `publish_post`.
 * Changed: Allow Base Transformer to handle WP_Term objects for transformation.
 * Changed: Allow omitting replies in ActivityPub representations instead of setting them as empty.
