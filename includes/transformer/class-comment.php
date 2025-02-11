@@ -12,6 +12,7 @@ use Activitypub\Comment as Comment_Utils;
 use Activitypub\Model\Blog;
 use Activitypub\Collection\Actors;
 use Activitypub\Collection\Replies;
+
 use function Activitypub\is_single_user;
 use function Activitypub\get_rest_url_by_path;
 use function Activitypub\was_comment_received;

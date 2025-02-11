@@ -12,6 +12,7 @@ use Activitypub\Shortcodes;
 use Activitypub\Model\Blog;
 use Activitypub\Collection\Actors;
 use Activitypub\Collection\Replies;
+
 use function Activitypub\esc_hashtag;
 use function Activitypub\object_to_uri;
 use function Activitypub\is_single_user;
