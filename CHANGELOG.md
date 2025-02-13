@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 * Enforce 200 status header for valid ActivityPub requests.
+* `object_id_to_comment` returns a commment now, even if there are more than one matching comment in the DB.
 * Integration of content-visibility setup in the block editor.
 * Update CLI commands to the new scheduler refactorings.
 * Do not add an audience to the Actor-Profiles.

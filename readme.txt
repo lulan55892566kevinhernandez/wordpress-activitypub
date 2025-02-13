@@ -139,6 +139,7 @@ For reasons of data protection, it is not possible to see the followers of other
 * Changed: Enabled querying of Outbox posts through the REST API to improve troubleshooting and debugging.
 * Changed: Updated terminology to be client-neutral in the Federated Reply block.
 * Fixed: Enforce 200 status header for valid ActivityPub requests.
+* Fixed: `object_id_to_comment` returns a commment now, even if there are more than one matching comment in the DB.
 * Fixed: Integration of content-visibility setup in the block editor.
 * Fixed: Update CLI commands to the new scheduler refactorings.
 * Fixed: Do not add an audience to the Actor-Profiles.
