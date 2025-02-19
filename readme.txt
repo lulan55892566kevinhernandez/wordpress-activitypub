@@ -131,6 +131,7 @@ For reasons of data protection, it is not possible to see the followers of other
 
 = Unreleased =
 
+* Added: A fallback `Note` for `Article` objects to improve previews on services that don't support Articles yet.
 * Added: A reply `context` for Posts and Comments to allow relying parties to discover the whole conversation of a thread.
 * Added: Allow Activities on URLs instead of requiring Activity-Objects. This is useful especially for sending Announces and Likes.
 * Added: Undo API for Outbox items.

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* A fallback `Note` for `Article` objects to improve previews on services that don't support Articles yet.
 * A reply `context` for Posts and Comments to allow relying parties to discover the whole conversation of a thread.
 * Setting to adjust the number of days Outbox items are kept before being purged.
 * Undo API for Outbox items.
