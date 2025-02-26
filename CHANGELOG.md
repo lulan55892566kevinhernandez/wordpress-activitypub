@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Bumped minimum required WordPress version to 6.4.
 * Use a later hook for Posts to get published to the Outbox, to get sure all `post_meta`s and `taxonomy`s are set stored properly.
 
+### Fixed
+
+* Remove `activitypub_reply_block` Filter after Activity-JSON is rendered, to not affect the HTML representation.
+
 ## [5.3.1] - 2025-02-26
 
 ### Fixed
