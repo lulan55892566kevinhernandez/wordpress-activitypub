@@ -46,8 +46,6 @@ class Post extends Base {
 	/**
 	 * Transforms the WP_Post object to an ActivityPub Object
 	 *
-	 * @see \Activitypub\Activity\Base_Object
-	 *
 	 * @return \Activitypub\Activity\Base_Object The ActivityPub Object
 	 */
 	public function to_object() {
@@ -1085,7 +1083,7 @@ class Post extends Base {
 	/**
 	 * Get the shares Collection.
 	 *
-	 * @return array The shares collection.
+	 * @return array The Shares collection.
 	 */
 	public function get_shares() {
 		return array(
