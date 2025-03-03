@@ -129,6 +129,10 @@ For reasons of data protection, it is not possible to see the followers of other
 
 == Changelog ==
 
+= Unreleased =
+
+* Fixed: Updates to certain user meta fields did not trigger an Update activity.
+
 = 5.4.0 =
 
 * Added: Upgrade script to fix Follower json representations with unescaped backslashes.
