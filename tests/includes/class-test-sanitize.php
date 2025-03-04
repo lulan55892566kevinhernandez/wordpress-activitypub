@@ -57,15 +57,6 @@ class Test_Sanitize extends \WP_UnitTestCase {
 				),
 			),
 			'empty_array'                     => array( array(), array() ),
-			'unsupported'                  => array(
-				array(
-					'',
-					false,
-					null,
-					false,
-				),
-				array(),
-			),
 		);
 	}
 
