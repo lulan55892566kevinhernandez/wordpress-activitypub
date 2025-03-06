@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Documentation for migrating from a Mastodon instance to WordPress.
 
+### Changed
+
+* Outbox items only get sent to followers when there are any.
+
 ### Fixed
 
 * Updates to certain user meta fields did not trigger an Update activity.
