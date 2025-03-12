@@ -132,6 +132,7 @@ For reasons of data protection, it is not possible to see the followers of other
 = Unreleased =
 
 * Added: Documentation for migrating from a Mastodon instance to WordPress.
+* Added: Added Constants to the Site-Health debug informations.
 * Changed: Outbox items only get sent to followers when there are any.
 * Changed: The Welcome page now uses WordPress's Settings API and the classic design of the WP Admin.
 * Changed: Uses two-digit version numbers in Outbox and NodeInfo responses.
