@@ -764,6 +764,15 @@ class Activitypub {
 
 		\register_meta(
 			'user',
+			$blog_prefix . 'activitypub_old_host_data',
+			array(
+				'description' => 'Actor object for the user on the old host.',
+				'single'      => true,
+			)
+		);
+
+		\register_meta(
+			'user',
 			$blog_prefix . 'activitypub_moved_to',
 			array(
 				'type'              => 'string',
