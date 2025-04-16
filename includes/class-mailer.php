@@ -124,6 +124,10 @@ class Mailer {
 			return;
 		}
 
+		if ( empty( $actor['webfinger'] ) ) {
+			$actor['webfinger'] = '@' . ( $actor['preferredUsername'] ?? $actor['name'] ) . '@' . wp_parse_url( $actor['url'], PHP_URL_HOST );
+		}
+
 		$email     = \get_option( 'admin_email' );
 		$admin_url = '/options-general.php?page=activitypub&tab=followers';
 
@@ -143,14 +147,33 @@ class Mailer {
 			array(
 				'admin_url' => $admin_url,
 				'target'    => $notification->target,
+				'stats'     => array(
+					'outbox'    => null,
+					'followers' => null,
+					'following' => null,
+				),
 			)
 		);
+
+		foreach ( $template_args['stats'] as $field => $value ) {
+			if ( empty( $actor[ $field ] ) ) {
+				continue;
+			}
+
+			$result = Http::get( $actor[ $field ], true );
+			if ( 200 === wp_remote_retrieve_response_code( $result ) ) {
+				$body = \json_decode( wp_remote_retrieve_body( $result ), true );
+				if ( isset( $body['totalItems'] ) ) {
+					$template_args['stats'][ $field ] = $body['totalItems'];
+				}
+			}
+		}
 
 		/* translators: 1: Blog name, 2: Follower name */
 		$subject = \sprintf( \__( '[%1$s] New Follower: %2$s', 'activitypub' ), get_option( 'blogname' ), $actor['name'] );
 
 		\ob_start();
-		\load_template( ACTIVITYPUB_PLUGIN_DIR . 'templates/new-follower-email.php', false, $template_args );
+		\load_template( ACTIVITYPUB_PLUGIN_DIR . 'templates/emails/new-follower.php', false, $template_args );
 		$html_message = \ob_get_clean();
 
 		$alt_function = function ( $mailer ) use ( $actor, $admin_url ) {
