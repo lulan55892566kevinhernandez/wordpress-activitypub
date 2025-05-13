@@ -109,6 +109,10 @@ class Activitypub {
 		self::add_headers();
 
 		if ( ! is_activitypub_request() || ! should_negotiate_content() ) {
+			if ( \get_query_var( 'p' ) && Outbox::POST_TYPE === \get_post_type( \get_query_var( 'p' ) ) ) {
+				\set_query_var( 'is_404', true );
+				\status_header( 406 );
+			}
 			return $template;
 		}
 
@@ -139,7 +143,7 @@ class Activitypub {
 		if ( $activitypub_template && use_authorized_fetch() ) {
 			$verification = Signature::verify_http_signature( $_SERVER );
 			if ( \is_wp_error( $verification ) ) {
-				header( 'HTTP/1.1 401 Unauthorized' );
+				\status_header( 401 );
 
 				// Fallback as template_loader can't return http headers.
 				return $template;
