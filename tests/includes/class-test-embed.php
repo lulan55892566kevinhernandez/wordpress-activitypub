@@ -2,7 +2,7 @@
 /**
  * Test the Embed class.
  *
- * @package ActivityPub
+ * @package Activitypub
  */
 
 namespace Activitypub\Tests;
