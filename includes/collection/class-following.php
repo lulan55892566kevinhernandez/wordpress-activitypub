@@ -107,7 +107,7 @@ class Following {
 	 * @param \WP_Post|int $post    The ID of the remote Actor.
 	 * @param int          $user_id The ID of the WordPress User.
 	 *
-	 * @return \WP_Post|\WP_Error The ID of the Actor or a WP_Error.
+	 * @return \WP_Post|\WP_Error The Actor post or a WP_Error.
 	 */
 	public static function unfollow( $post, $user_id ) {
 		$post = \get_post( $post );
@@ -115,6 +115,8 @@ class Following {
 		if ( ! $post ) {
 			return new \WP_Error( 'activitypub_remote_actor_not_found', __( 'Remote actor not found', 'activitypub' ) );
 		}
+
+		$actor_type = Actors::get_type_by_id( $user_id );
 
 		\delete_post_meta( $post->ID, self::FOLLOWING_META_KEY, $user_id );
 		\delete_post_meta( $post->ID, self::PENDING_META_KEY, $user_id );
@@ -125,6 +127,7 @@ class Following {
 				'post_type'      => Outbox::POST_TYPE,
 				'nopaging'       => true,
 				'posts_per_page' => 1,
+				'author'         => \max( $user_id, 0 ),
 				'fields'         => 'ids',
 				'number'         => 1,
 				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
@@ -132,6 +135,14 @@ class Following {
 					array(
 						'key'   => '_activitypub_object_id',
 						'value' => $post->guid,
+					),
+					array(
+						'key'   => '_activitypub_activity_type',
+						'value' => 'Follow',
+					),
+					array(
+						'key'   => '_activitypub_activity_actor',
+						'value' => $actor_type,
 					),
 				),
 			)
