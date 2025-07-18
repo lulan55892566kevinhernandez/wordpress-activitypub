@@ -22,6 +22,8 @@ if ( ! \class_exists( '\WP_List_Table' ) ) {
  * Following Table-Class.
  */
 class Following extends \WP_List_Table {
+	use Actor_List_Table;
+
 	/**
 	 * User ID.
 	 *
@@ -199,15 +201,7 @@ class Following extends \WP_List_Table {
 		}
 
 		if ( isset( $_GET['s'] ) ) {
-			$search = \sanitize_text_field( \wp_unslash( $_GET['s'] ) );
-			$search = \str_replace( 'acct:', '', $search );
-			$search = \str_replace( '@', ' ', $search );
-			$search = \str_replace( 'http://', '', $search );
-			$search = \str_replace( 'https://', '', $search );
-			$search = \str_replace( 'www.', '', $search );
-			$search = \trim( $search );
-
-			$args['s'] = $search;
+			$args['s'] = self::normalize_search_term( \wp_unslash( $_GET['s'] ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		}
 
 		if ( isset( $_GET['status'] ) ) {
