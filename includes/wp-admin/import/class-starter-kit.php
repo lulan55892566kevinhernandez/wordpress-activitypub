@@ -8,7 +8,6 @@
 namespace Activitypub\WP_Admin\Import;
 
 use function Activitypub\follow;
-use function Activitypub\is_actor;
 use function Activitypub\object_to_uri;
 use function Activitypub\is_user_type_disabled;
 
@@ -45,6 +44,20 @@ class Starter_Kit {
 	private static $starter_kit;
 
 	/**
+	 * Actors to follow.
+	 *
+	 * @var array
+	 */
+	private static $actor_list;
+
+	/**
+	 * Blog user filter callback.
+	 *
+	 * @var callable
+	 */
+	private static $blog_user_filter_callback;
+
+	/**
 	 * Dispatch
 	 */
 	public static function dispatch() {
@@ -67,8 +80,21 @@ class Starter_Kit {
 
 			case 2:
 				\check_admin_referer( 'import-starter-kit' );
-				self::$import_id = \absint( $_POST['import_id'] ?? 0 );
-				self::$author    = \absint( $_POST['author'] ?? \get_current_user_id() );
+				self::$import_id  = \absint( $_POST['import_id'] ?? 0 );
+				self::$author     = \absint( $_POST['author'] ?? \get_current_user_id() );
+				self::$actor_list = \array_values(
+					array_filter(
+						array_map(
+							function ( $actor ) {
+								$actor = \sanitize_text_field( $actor );
+								$actor = \wp_unslash( $actor );
+								return self::is_valid_actor( $actor ) ? $actor : null;
+							},
+							// phpcs:ignore
+							$_POST['actors'] ?? array()
+						)
+					)
+				);
 
 				\set_time_limit( 0 );
 				self::import();
@@ -140,43 +166,177 @@ class Starter_Kit {
 	 * Import options.
 	 */
 	public static function import_options() {
-		$activitypub_users = function ( $users ) {
-			// Add blog user to the html output if enabled.
-			$users = \preg_replace( '/<\/select>/', '<option value="0">' . \__( 'Blog User', 'activitypub' ) . '</option></select>', $users );
-			return $users;
+		self::setup_blog_user_filter();
+
+		$actors = self::get_actor_list();
+		if ( \is_wp_error( $actors ) ) {
+			self::render_error( $actors );
+			return;
+		}
+
+		self::render_import_form( $actors );
+		self::cleanup_blog_user_filter();
+	}
+
+	/**
+	 * Setup blog user filter for dropdown.
+	 */
+	private static function setup_blog_user_filter() {
+		if ( is_user_type_disabled( 'blog' ) ) {
+			return;
+		}
+
+		self::$blog_user_filter_callback = function ( $users ) {
+			return \preg_replace(
+				'/<\/select>/',
+				'<option value="0">' . \__( 'Blog User', 'activitypub' ) . '</option></select>',
+				$users
+			);
 		};
 
-		if ( ! is_user_type_disabled( 'blog' ) ) {
-			\add_filter(
-				'wp_dropdown_users',
-				$activitypub_users
-			);
+		\add_filter( 'wp_dropdown_users', self::$blog_user_filter_callback );
+		self::$blog_user_filter_added = true;
+	}
+
+	/**
+	 * Cleanup blog user filter.
+	 */
+	private static function cleanup_blog_user_filter() {
+		if ( self::$blog_user_filter_callback && self::$blog_user_filter_added ) {
+			\remove_filter( 'wp_dropdown_users', self::$blog_user_filter_callback );
 		}
+		self::$blog_user_filter_callback = null;
+		self::$blog_user_filter_added    = false;
+	}
+
+	/**
+	 * Render error message.
+	 *
+	 * @param \WP_Error $error The error to render.
+	 */
+	private static function render_error( $error ) {
+		\printf(
+			'<p><strong>%s</strong><br />%s</p>',
+			\esc_html__( 'Sorry, there has been an error.', 'activitypub' ),
+			\esc_html( $error->get_error_message() )
+		);
+	}
+
+	/**
+	 * Render the import form.
+	 *
+	 * @param array $actors The actors to render.
+	 */
+	private static function render_import_form( $actors ) {
 		?>
 		<form action="<?php echo \esc_url( \admin_url( 'admin.php?import=starter-kit&amp;step=2' ) ); ?>" method="post">
 			<?php \wp_nonce_field( 'import-starter-kit' ); ?>
 			<input type="hidden" name="import_id" value="<?php echo esc_attr( self::$import_id ); ?>" />
-			<h3><?php \esc_html_e( 'Assign Author', 'activitypub' ); ?></h3>
-			<p>
-				<label for="author"><?php \esc_html_e( 'Author:', 'activitypub' ); ?></label>
-				<?php
-				\wp_dropdown_users(
-					array(
-						'name'       => 'author',
-						'id'         => 'author',
-						'show'       => 'display_name_with_login',
-						'selected'   => \get_current_user_id(),
-						'capability' => 'activitypub',
-					)
-				);
-				?>
-			</p>
+
+			<?php self::render_starter_kit_info(); ?>
+			<?php self::render_author_selection(); ?>
+			<?php self::render_actor_selection( $actors ); ?>
+
 			<p class="submit">
 				<input type="submit" class="button button-primary" value="<?php \esc_attr_e( 'Import', 'activitypub' ); ?>" />
 			</p>
 		</form>
 		<?php
-		\remove_filter( 'wp_dropdown_users', $activitypub_users );
+	}
+
+	/**
+	 * Render starter kit information.
+	 */
+	private static function render_starter_kit_info() {
+		$name = empty( self::$starter_kit['name'] )
+			? \__( 'Starter Kit', 'activitypub' )
+			: self::$starter_kit['name'];
+
+		echo '<h3>' . \esc_html( $name ) . '</h3>';
+
+		if ( ! empty( self::$starter_kit['image']['url'] ) ) {
+			\printf(
+				'<img src="%s" style="max-width: 500px;" alt="%s" />',
+				\esc_url( self::$starter_kit['image']['url'] ),
+				\esc_attr( self::$starter_kit['image']['summary'] ?? '' )
+			);
+		}
+
+		if ( ! empty( self::$starter_kit['summary'] ) ) {
+			echo '<p>' . \esc_html( self::$starter_kit['summary'] ) . '</p>';
+		}
+
+		if ( ! empty( self::$starter_kit['attributedTo'] ) ) {
+			echo \wp_kses_post(
+				\sprintf(
+					'Created by <a href="%1$s" target="_blank">%1$s</a>',
+					\esc_url( self::$starter_kit['attributedTo'] )
+				)
+			);
+		}
+	}
+
+	/**
+	 * Render author selection.
+	 */
+	private static function render_author_selection() {
+		?>
+		<h4><?php \esc_html_e( 'Select the author for the imported Starter Kit', 'activitypub' ); ?></h4>
+		<p>
+			<label for="author"><?php \esc_html_e( 'Author:', 'activitypub' ); ?></label>
+			<?php
+			\wp_dropdown_users(
+				array(
+					'name'       => 'author',
+					'id'         => 'author',
+					'show'       => 'display_name_with_login',
+					'selected'   => \get_current_user_id(),
+					'capability' => 'activitypub',
+				)
+			);
+			?>
+		</p>
+		<?php
+	}
+
+	/**
+	 * Render actor selection.
+	 *
+	 * @param array $actors The actors to render.
+	 */
+	private static function render_actor_selection( $actors ) {
+		?>
+		<h4><?php \esc_html_e( 'Select the accounts you want to follow', 'activitypub' ); ?></h4>
+		<ul>
+			<?php foreach ( $actors as $actor ) : ?>
+				<?php
+				$actor_uri = object_to_uri( $actor );
+				$actor_uri = \ltrim( $actor_uri, '@' );
+
+				if ( ! self::is_valid_actor( $actor_uri ) ) {
+					continue;
+				}
+				?>
+				<li>
+					<label>
+						<input type="checkbox" name="actors[]" value="<?php echo \esc_attr( $actor_uri ); ?>" checked />
+						<?php echo \esc_html( $actor_uri ); ?>
+					</label>
+				</li>
+			<?php endforeach; ?>
+		</ul>
+		<?php
+	}
+
+	/**
+	 * Check if actor URI is valid.
+	 *
+	 * @param string $actor_uri The actor URI to validate.
+	 *
+	 * @return bool True if the actor URI is valid, false otherwise.
+	 */
+	private static function is_valid_actor( $actor_uri ) {
+		return false !== \filter_var( $actor_uri, FILTER_VALIDATE_URL ) || false !== \filter_var( $actor_uri, FILTER_VALIDATE_EMAIL );
 	}
 
 	/**
@@ -184,27 +344,8 @@ class Starter_Kit {
 	 */
 	public static function import() {
 		$error_message = \__( 'Sorry, there has been an error.', 'activitypub' );
-		$file          = \get_attached_file( self::$import_id );
-
-		\WP_Filesystem();
-
-		global $wp_filesystem;
-
-		$file_contents = $wp_filesystem->get_contents( $file );
-		if ( false === $file_contents ) {
-			\printf( '<p><strong>%s</strong><br />%s</p>', \esc_html( $error_message ), \esc_html__( 'Could not read the uploaded file.', 'activitypub' ) );
-			return;
-		}
-
-		self::$starter_kit = \json_decode( $file_contents, true );
-		if ( null === self::$starter_kit ) {
-			\printf( '<p><strong>%s</strong><br />%s</p>', \esc_html( $error_message ), \esc_html__( 'Invalid JSON format in the uploaded file.', 'activitypub' ) );
-			return;
-		}
 
 		\wp_suspend_cache_invalidation();
-		\wp_defer_term_counting( true );
-		\wp_defer_comment_counting( true );
 
 		/**
 		 * Fires when the Starter Kit import starts.
@@ -214,8 +355,6 @@ class Starter_Kit {
 		$result = self::follow();
 
 		\wp_suspend_cache_invalidation( false );
-		\wp_defer_term_counting( false );
-		\wp_defer_comment_counting( false );
 
 		\wp_import_cleanup( self::$import_id );
 
@@ -240,7 +379,7 @@ class Starter_Kit {
 		$skipped  = 0;
 		$followed = 0;
 
-		$items = self::$starter_kit['items'] ?? self::$starter_kit['orderedItems'] ?? array();
+		$items = self::$actor_list;
 
 		foreach ( $items as $actor_id ) {
 			$actor_id = object_to_uri( $actor_id );
@@ -254,10 +393,12 @@ class Starter_Kit {
 			$result = follow( $actor_id, self::$author );
 
 			if ( \is_wp_error( $result ) ) {
+				/* translators: %s: Account ID */
+				\printf( '<p>' . \esc_html__( '&#x2717; %s', 'activitypub' ) . '</p>', \esc_html( $actor_id ) );
 				++$skipped;
 			} else {
 				/* translators: %s: Account ID */
-				\printf( '<p>' . \esc_html__( 'Followed %s', 'activitypub' ) . '</p>', \esc_html( $actor_id ) );
+				\printf( '<p>' . \esc_html__( '&#x2713; %s', 'activitypub' ) . '</p>', \esc_html( $actor_id ) );
 				++$followed;
 			}
 		}
@@ -297,5 +438,38 @@ class Starter_Kit {
 	 */
 	public static function footer() {
 		echo '</div>';
+	}
+
+	/**
+	 * Get actor list.
+	 */
+	private static function get_actor_list() {
+		$file = \get_attached_file( self::$import_id );
+
+		\WP_Filesystem();
+
+		global $wp_filesystem;
+
+		$file_contents = $wp_filesystem->get_contents( $file );
+		if ( false === $file_contents ) {
+			return new \WP_Error( 'file_not_found', \esc_html__( 'Could not read the uploaded file.', 'activitypub' ) );
+		}
+
+		self::$starter_kit = \json_decode( $file_contents, true );
+		if ( null === self::$starter_kit ) {
+			return new \WP_Error( 'invalid_json', \esc_html__( 'Invalid JSON format in the uploaded file.', 'activitypub' ) );
+		}
+
+		$actors = self::$starter_kit['items'] ?? self::$starter_kit['orderedItems'] ?? array();
+
+		// Limit list to 150 actors.
+		// TODO: Make this configurable.
+		$actors = \array_slice( $actors, 0, 150 );
+
+		if ( ! $actors ) {
+			return new \WP_Error( 'empty_actor_list', \esc_html__( 'The uploaded file does not contain any actors.', 'activitypub' ) );
+		}
+
+		return $actors;
 	}
 }
