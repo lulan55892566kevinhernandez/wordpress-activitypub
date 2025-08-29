@@ -31,6 +31,8 @@ class Activitypub {
 		\add_action( 'init', array( self::class, 'register_post_types' ), 11 );
 		\add_action( 'init', array( self::class, 'register_oembed_providers' ), 11 );
 
+		\add_action( 'rest_api_init', array( self::class, 'register_ap_actor_rest_field' ) );
+
 		\add_filter( 'template_include', array( self::class, 'render_activitypub_template' ), 99 );
 		\add_action( 'template_redirect', array( self::class, 'template_redirect' ) );
 		\add_filter( 'redirect_canonical', array( self::class, 'redirect_canonical' ), 10, 2 );
@@ -804,6 +806,32 @@ class Activitypub {
 		 * Fires after ActivityPub custom post types have been registered.
 		 */
 		\do_action( 'activitypub_after_register_post_type' );
+	}
+
+	/**
+	 * Register REST field for ap_actor posts.
+	 */
+	public static function register_ap_actor_rest_field() {
+		\register_rest_field(
+			Actors::POST_TYPE,
+			'activitypub_json',
+			array(
+				/**
+				 * Get the raw post content without WordPress content filtering.
+				 *
+				 * @param array $response Prepared response array.
+				 * @return string The raw post content.
+				 */
+				'get_callback' => function ( $response ) {
+					return \get_post_field( 'post_content', $response['id'] );
+				},
+				'schema'       => array(
+					'description' => 'Raw ActivityPub JSON data without WordPress content filtering',
+					'type'        => 'string',
+					'context'     => array( 'view', 'edit' ),
+				),
+			)
+		);
 	}
 
 	/**
