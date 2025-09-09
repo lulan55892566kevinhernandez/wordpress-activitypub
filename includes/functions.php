@@ -859,7 +859,7 @@ function get_post_type_description( $post_type ) {
 			$description = '';
 			break;
 		case 'attachment':
-			$description = ' - ' . __( 'The attachments that you have uploaded to a post (images, videos, documents or other files).', 'activitypub' );
+			$description = ' - ' . __( 'Files uploaded to the media library (such as images, videos, documents, or other attachments). Note: This federates every file upload, not just published content.', 'activitypub' );
 			break;
 		default:
 			$description = '';
