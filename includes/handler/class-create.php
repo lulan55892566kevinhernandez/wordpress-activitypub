@@ -61,22 +61,23 @@ class Create {
 			return;
 		}
 
-		$state    = Interactions::add_comment( $activity );
-		$reaction = null;
+		$success = false;
+		$result  = Interactions::add_comment( $activity );
 
-		if ( $state && ! \is_wp_error( $state ) ) {
-			$reaction = \get_comment( $state );
+		if ( $result && ! \is_wp_error( $result ) ) {
+			$success = true;
+			$result  = \get_comment( $result );
 		}
 
 		/**
-		 * Fires after a Create activity has been handled.
+		 * Fires after an ActivityPub Create activity has been handled.
 		 *
-		 * @param array                      $activity The activity-object.
-		 * @param int                        $user_id  The id of the local blog-user.
-		 * @param \WP_Comment|\WP_Error      $state    The comment object or WP_Error.
-		 * @param \WP_Comment|\WP_Error|null $reaction The reaction object or WP_Error.
+		 * @param array                            $activity The ActivityPub activity data.
+		 * @param int                              $user_id  The local user ID.
+		 * @param bool                             $success  True on success, false otherwise.
+		 * @param array|string|int|\WP_Error|false $result   The WP_Comment object of the created comment, or null if creation failed.
 		 */
-		\do_action( 'activitypub_handled_create', $activity, $user_id, $state, $reaction );
+		\do_action( 'activitypub_handled_create', $activity, $user_id, $success, $result );
 	}
 
 	/**
